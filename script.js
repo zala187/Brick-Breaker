@@ -3,18 +3,18 @@ const ctx = canvas.getContext('2d');
 const W = Math.min(480, window.innerWidth - 20);
 const H = Math.min(600, window.innerHeight - 80);
 canvas.width = W; canvas.height = H;
-
+ 
 const ROWS = 5, COLS = 8;
 const BW = (W - 20) / COLS - 6, BH = 22;
 const PAD_W = W * 0.22, PAD_H = 12, PAD_Y = H - 40;
 const BALL_R = 8;
-
+ 
 let score=0, lives=3, level=1, gameState='start';
 let padX = W/2 - PAD_W/2;
 let ball, bricks, speed;
-
+ 
 const COLORS = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db'];
-
+ 
 function initLevel() {
   speed = 3.5 + level * 0.5;
   ball = { x: W/2, y: PAD_Y - BALL_R - 2, dx: speed * (Math.random()>0.5?1:-1), dy: -speed, active: false };
@@ -23,7 +23,7 @@ function initLevel() {
     bricks.push({ x: 10 + c*(BW+6), y: 50 + r*(BH+6), w: BW, h: BH, alive: true, color: COLORS[r], hits: level>2 && r===0 ? 2 : 1 });
   }
 }
-
+ 
 function drawPad() {
   const grd = ctx.createLinearGradient(padX, PAD_Y, padX, PAD_Y+PAD_H);
   grd.addColorStop(0,'#74b9ff'); grd.addColorStop(1,'#0984e3');
@@ -32,14 +32,14 @@ function drawPad() {
   ctx.roundRect(padX, PAD_Y, PAD_W, PAD_H, 6);
   ctx.fill();
 }
-
+ 
 function drawBall() {
   const grd = ctx.createRadialGradient(ball.x-2, ball.y-2, 1, ball.x, ball.y, BALL_R);
   grd.addColorStop(0,'#fff'); grd.addColorStop(1,'#fdcb6e');
   ctx.fillStyle = grd;
   ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI*2); ctx.fill();
 }
-
+ 
 function drawBricks() {
   bricks.forEach(b => {
     if(!b.alive) return;
@@ -49,7 +49,7 @@ function drawBricks() {
     ctx.fillRect(b.x+4, b.y+3, b.w-8, 5);
   });
 }
-
+ 
 function showMsg(title, sub) {
   document.getElementById('mt').textContent = title;
   document.getElementById('ms').textContent = sub;
@@ -61,24 +61,24 @@ function updateUI() {
   document.getElementById('level').textContent = level;
   document.getElementById('lives').textContent = '❤️'.repeat(lives);
 }
-
+ 
 function update() {
   if(gameState !== 'play') return;
   if(!ball.active) { ball.x = padX + PAD_W/2; return; }
-
+ 
   ball.x += ball.dx; ball.y += ball.dy;
-
+ 
   if(ball.x - BALL_R < 0) { ball.x = BALL_R; ball.dx = Math.abs(ball.dx); }
   if(ball.x + BALL_R > W) { ball.x = W-BALL_R; ball.dx = -Math.abs(ball.dx); }
   if(ball.y - BALL_R < 0) { ball.y = BALL_R; ball.dy = Math.abs(ball.dy); }
-
+ 
   if(ball.y + BALL_R >= PAD_Y && ball.y + BALL_R <= PAD_Y+PAD_H+4 && ball.x > padX-4 && ball.x < padX+PAD_W+4) {
     ball.dy = -Math.abs(ball.dy);
     let hit = (ball.x - padX) / PAD_W;
     ball.dx = (hit - 0.5) * speed * 2.5;
     ball.y = PAD_Y - BALL_R - 1;
   }
-
+ 
   if(ball.y - BALL_R > H) {
     lives--;
     updateUI();
@@ -88,7 +88,7 @@ function update() {
     gameState = 'pause';
     return;
   }
-
+ 
   let aliveBricks = 0;
   bricks.forEach(b => {
     if(!b.alive) return;
@@ -103,7 +103,7 @@ function update() {
       if(minV < minH) ball.dy *= -1; else ball.dx *= -1;
     }
   });
-
+ 
   if(aliveBricks === 0) {
     level++; score += 50 * level; updateUI();
     initLevel();
@@ -111,7 +111,7 @@ function update() {
     showMsg('Level ' + level + '! 🎉', 'Space ya Click karo agle level ke liye');
   }
 }
-
+ 
 function draw() {
   ctx.clearRect(0,0,W,H);
   const bg = ctx.createLinearGradient(0,0,0,H);
@@ -119,9 +119,9 @@ function draw() {
   ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
   drawBricks(); drawPad(); drawBall();
 }
-
+ 
 function loop() { update(); draw(); requestAnimationFrame(loop); }
-
+ 
 function action() {
   if(gameState==='start'||gameState==='over') {
     score=0; lives=3; level=1; updateUI(); initLevel(); hideMsg(); gameState='pause';
@@ -132,7 +132,7 @@ function action() {
     ball.active=true;
   }
 }
-
+ 
 canvas.addEventListener('mousemove', e => {
   const r = canvas.getBoundingClientRect();
   padX = e.clientX - r.left - PAD_W/2;
@@ -150,7 +150,7 @@ document.addEventListener('keydown', e => {
   if(e.code==='ArrowLeft') padX = Math.max(0, padX-20);
   if(e.code==='ArrowRight') padX = Math.min(W-PAD_W, padX+20);
 });
-
+ 
 initLevel();
 gameState = 'start';
 showMsg('Brick Breaker 🎮', 'Space ya Click karo shuru karne ke liye');
