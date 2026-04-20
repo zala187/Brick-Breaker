@@ -23,6 +23,16 @@
       height: 100vh;
     }
 
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    canvas {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
     #ui {
       display: flex;
       gap: 30px;
@@ -65,12 +75,16 @@
 
 <body>
 
-  <div id="ui">
-    <span>Score: <b id="score">0</b></span>
-    <span>Level: <b id="level">1</b></span>
-    <span>Lives: <b id="lives">3</b></span>
+  <div class="container">
+    <div id="ui">
+      <span>Score: <b id="score">0</b></span>
+      <span>Level: <b id="level">1</b></span>
+      <span>Lives: <b id="lives">3</b></span>
+    </div>
+
+    <canvas id="c"></canvas>
   </div>
-  <canvas id="c"></canvas>
+
   <div id="msg">
     <h2 id="mt"></h2>
     <p id="ms"></p>
